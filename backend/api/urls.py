@@ -13,7 +13,7 @@ urlpatterns = [
 # ENDPOINTS
 
 # http://127.0.0.1:8001/api/v1/user/token/
-# http://127.0.0.1:8001/api/v1/user/token/refresh
+# http://127.0.0.1:8001/api/v1/user/token/refresh get a new access token
 # http://127.0.0.1:8001/api/v1/user/register
 # http://127.0.0.1:8001/api/v1/user/password-reset-email/<email>/
 # http://127.0.0.1:8001/api/v1/user/password-change/
