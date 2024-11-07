@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { mountStoreDevtool } from "simple-zustand-devtools"; // is a function that sets up a debugging tool for a store 
+import { create } from "zustand"; // is a function that creates a store
+import { mountStoreDevtool } from "simple-zustand-devtools"; // is a function that sets up a debugging tool for a store
 
 // store for authentication; get user information
 const useAuthStore = create((set, get) => ({
@@ -12,6 +12,10 @@ const useAuthStore = create((set, get) => ({
     // in case they are null or undefined.
     user_id: get().allUserData?.user_id,
     username: get().allUserData?.username, // username
+  }),
+
+  isLoading: () => ({
+    isLoading: true
   }),
 
   setUser: (user) => set({ allUserData: user }), // set user
