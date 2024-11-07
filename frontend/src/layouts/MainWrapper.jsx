@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { setUser } from "../store/auth";
+import { setUser } from "../utils/auth";
 
 /**
  * MainWrapper is a functional component that initializes and manages the loading state
@@ -32,9 +32,9 @@ const MainWrapper = ({ children }) => {
         handler();
     }, []); // run the handler when the component mounts
 
-    
+
     /* if loading is true, return null, otherwise return children */
-    return <>{loading ? null : children}</>
+    return <>{loading ? null : children}</>;
 
 }
-export default MainWrapper
+export default MainWrapper;

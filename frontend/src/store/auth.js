@@ -36,4 +36,4 @@ if (import.meta.env.DEV) { // import.meta.env.DEV is a way to access environment
   mountStoreDevtool("Auth Store", useAuthStore);
 }
 
-export default useAuthStore; // export store { useAuthStore, <other stores> } to export multiple stores
+export { useAuthStore }; // export store { useAuthStore, <other stores> } to export multiple stores

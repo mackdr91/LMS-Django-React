@@ -1,4 +1,4 @@
-import {useAuthStore} from "../store/auth"; // import useAuthStore from the store directory
+import  {useAuthStore}  from "../store/auth"; // import useAuthStore from the store directory
 import axios from "./axios"; // import axios; axios = apiInstance()
 import jwt_decode from "jwt-decode"; // import the jwt-decode library; decode JWT tokens
 import Cookie from "js-cookie"; // import the Cookie library; store and retrieve Cookies
@@ -118,7 +118,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 }
 
 
-export const getRefreshToken = async (refresh_token) => {
+export const getRefreshToken = async () => {
     const refresh_token = Cookie.get("refresh_token"); // get the refresh token from Cookies
     const res = await axios.post("user/token/refresh/", { refresh: refresh_token }); // get the response from the API
     return res.data;
