@@ -8,11 +8,10 @@ function BaseFooter() {
           <div className="col-lg-4 col-md-6 col-12 text-white">
             {/* about company */}
             <div className="mb-4">
-              <h1>Desphixs</h1>
+              <h1>LMS</h1>
               <div className="mt-4">
                 <p>
-                  Desphixs is feature-rich components and beautifully Bootstrap UIKit
-                  for developers, built with bootstrap responsive framework.
+                  LMS System Using Django
                 </p>
                 {/* social media */}
                 <div className="fs-4 mt-4">
@@ -164,7 +163,7 @@ function BaseFooter() {
               <div className="me-4">
                 <span>
                   ©<span id="copyright5"></span>
-                  Desphixs
+                  LMS
                 </span>
               </div>
               <div>
@@ -285,7 +284,7 @@ function BaseFooter() {
                         </defs>
                       </svg>
                     </span>
-                    Français
+                    Spanish
                   </a>
                 </li>
                 <li>

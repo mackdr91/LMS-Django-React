@@ -3,6 +3,7 @@ import MainWrapper from "./layouts/MainWrapper";
 import PrivateRoute from "./layouts/PrivateRoute";
 
 import Register from "./views/auth/Register";
+import Login from "./views/auth/Login";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <MainWrapper> {/* MainWrapper */}
         <Routes> {/* Routes */}
           <Route path="/register/" element={<Register />} /> {/* Register page */}
+          <Route path="/login/" element={<Login />} /> {/* Login page */}
         </Routes>
       </MainWrapper>
     </BrowserRouter>

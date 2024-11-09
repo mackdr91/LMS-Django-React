@@ -18,7 +18,7 @@ export const login = async (email, password) => { // login function asynchronous
     try {
         const { data, status } = await axios.post("user/token", { email, password }); // get the response from the API; destructure the data and status from the response
 
-        if (status === 200) {
+        if (status === 200) { 
 
            setAuthUser(data.access, data.refresh) // if the status is 200, set the auth user with the access and refresh tokens
            alert("Login successful"); // alert the user that the login was successful
