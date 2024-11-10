@@ -16,18 +16,18 @@ import Swal from "sweetalert2"; // import the SweetAlert2 library; send alerts t
  */
 export const login = async (email, password) => { // login function asynchronously waits for a response from the API (Promise)
     try {
-        const { data, status } = await axios.post("user/token", { email, password }); // get the response from the API; destructure the data and status from the response
+        const { data, status } = await axios.post("user/token/", { email, password }); // get the response from the API; destructure the data and status from the response
 
-        if (status === 200) { 
+        if (status === 200) {
 
            setAuthUser(data.access, data.refresh) // if the status is 200, set the auth user with the access and refresh tokens
-           alert("Login successful"); // alert the user that the login was successful
+           //alert("Login successful"); // alert the user that the login was successful
         }
         return { data, error: null } // if there is no error, return the data
 
     } catch (error) {
         console.log(error)
-        return { data: null, error: error.response.data.detail || "Something went wrong" } // if there is an error, return the error message
+        return { data: null, error: error.response.data?.detail || "Something went wrong" } // if there is an error, return the error message
     }
 };
 
@@ -44,7 +44,7 @@ export const login = async (email, password) => { // login function asynchronous
  */
 export const register = async (full_name, email, password, password2) => { // register function asynchronously waits for a response from the API (Promise)
     try {
-        const { data, status } = await axios.post("user/register/", { // get the response from the API; destructure the data and status from the response
+        const { data } = await axios.post("user/register/", { // get the response from the API; destructure the data and status from the response
             full_name,
             email,
             password,
@@ -52,12 +52,12 @@ export const register = async (full_name, email, password, password2) => { // re
         });
 
         await login(email, password); // login the user with the email and password
-        alert("Registration successful"); // alert the user that the registration was successful
+        //alert("Registration successful");  alert the user that the registration was successful
         return { data, error: null } // if there is no error, return the data
 
     } catch (error) {
         console.log(error)
-        return { data: null, error: error.response.data.detail || "Something went wrong" }
+        return { data: null, error: ` ${error.response.data.email}` || "Something went wrong" }
 
     }
 }

@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-#hjl&a5p@mo^gm#_1siy5w&uodzr*j=)hq(+w&rybf=v)70ql&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
@@ -219,4 +219,22 @@ EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 EMAIL = env("EMAIL")
 
 # Set coresheader to allow all origin
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+
+ 
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+
+]
+CORS_URLS_REGEX = r"^/api/.*$"
+
+# Set corsheader to allow all methods
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
