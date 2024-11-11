@@ -1,8 +1,7 @@
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import apiInstance from '../../utils/axios'
+import { useState } from 'react'
 import { login } from '../../utils/auth'
 
 

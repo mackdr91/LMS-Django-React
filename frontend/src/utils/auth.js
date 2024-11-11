@@ -73,7 +73,7 @@ export const logout = () => {
     Cookie.remove("refresh_token"); // remove the refresh Cookie
     useAuthStore.getState().setUser(null); // set the auth user to null
 
-    alert("Logout successful"); // alert the user that the logout was successful
+    // alert("Logout successful"); alert the user that the logout was successful
 }
 
 /**

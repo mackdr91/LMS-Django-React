@@ -2,9 +2,32 @@ import React from 'react'
 import BaseHeader from '../partials/BaseHeader'
 import BaseFooter from '../partials/BaseFooter'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import apiInstance from '../../utils/axios'
 
 
 function ForgotPassword() {
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+   try{
+    await apiInstance.get(`user/password-reset-email/${email}/`).then((res) => {
+      console.log(res.data)
+      setIsLoading(false)
+    })
+   }catch(err){
+    console.log(err)
+    setIsLoading(false)
+   }
+   }
+
+
+
+
   return (
     <>
       <BaseHeader />
@@ -20,7 +43,7 @@ function ForgotPassword() {
                     Let's help you get back into your account
                   </span>
                 </div>
-                <form className="needs-validation" noValidate="">
+                <form className="needs-validation" noValidate="" onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email Address</label>
                     <input
@@ -30,6 +53,7 @@ function ForgotPassword() {
                       name="email"
                       placeholder="johndoe@gmail.com"
                       required=""
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
