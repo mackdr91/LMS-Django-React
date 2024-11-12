@@ -58,10 +58,20 @@ function ForgotPassword() {
                   </div>
 
                   <div>
-                    <div className="d-grid">
-                      <button type="submit" className="btn btn-primary">
-                        Reset Password <i className='fas fa-arrow-right'></i>
-                      </button>
+
+                      <div className="d-grid">
+                    { isLoading === true && (
+                         <button disabled type="submit" className="btn btn-primary">
+                         Processing <i className='fas fa-spinner fa-spin'></i>
+                       </button>
+
+                      ) }
+
+                      { isLoading === false && (
+                         <button type="submit" className="btn btn-primary">
+                         Reset Password <i className='fas fa-arrow-right'></i>
+                       </button>
+                      ) }
                     </div>
                   </div>
                 </form>

@@ -7,7 +7,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100, blank=True)
-    otp = models.CharField(max_length=100, blank=True)
+    otp = models.CharField(max_length=100, blank=True, null=True)
     refresh_token = models.CharField(max_length=1000, blank=True, null=True)
 
     USERNAME_FIELD = 'email' # The field that will be used as the unique identifier for a user
