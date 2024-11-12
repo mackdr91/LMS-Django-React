@@ -202,18 +202,19 @@ JAZZMIN_UI_TWEAKS = {
 AUTH_USER_MODEL = 'userauth.CustomUser' # Custom user model
 
 # Mailgun settings
-MAILGUN_SECRET_KEY = env("MAILGUN_SECRET_KEY")
-MAILGUN_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
-MAILSENDER_API_TOKEN = env("MAILSENDER_API_TOKEN")
+
+
+# Resend settings
+RESEND_API_KEY = env("RESEND_API_KEY")
+
+
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
 
 
 # Anymail settings
 ANYMAIL = {
-    "MAILGUN_API_KEY": MAILGUN_SECRET_KEY,
-    "MAILGUN_SENDER_DOMAIN": MAILGUN_SENDER_DOMAIN,
+    "RESEND_API_KEY": env("RESEND_API_KEY"),
 }
-
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
 # Email settings
 EMAIL = env("EMAIL")
@@ -221,7 +222,7 @@ EMAIL = env("EMAIL")
 # Set coresheader to allow all origin
 CORS_ALLOWED_ORIGINS = [
 
- 
+
     "http://127.0.0.1:8000",
     "http://127.0.0.1:5173",
     "http://localhost:5173",
