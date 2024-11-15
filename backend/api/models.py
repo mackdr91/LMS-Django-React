@@ -114,6 +114,7 @@ class Teacher(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
     image = models.FileField(
         default="category.jpg", upload_to="course-file", null=True, blank=True
     )
@@ -210,7 +211,7 @@ class Course(models.Model):
         :return: Queryset of VariantItem objects for this course
         :rtype: QuerySet
         """
-        return VariantItem.objects.filter(varriant__course=self)
+        return VariantItem.objects.filter(variant__course=self)
 
     def lectures(self):
         """
@@ -223,7 +224,7 @@ class Course(models.Model):
         :return: Queryset of VariantItem objects for this course
         :rtype: QuerySet
         """
-        return VariantItem.objects.filter(varriant__course=self)
+        return VariantItem.objects.filter(variant__course=self)
 
     def average_rating(self):
         """

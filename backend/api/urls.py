@@ -3,6 +3,14 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
+
+    # Core Endpoints
+    path('course/category/', api_views.CategoryListAPIView.as_view(), name='course_category'),
+    path('course/course-list/', api_views.CourseListAPIView.as_view(), name='course_list'),
+    path('course/course-detail/<slug>/', api_views.CourseDetailAPIView.as_view(), name='course_detail'),
+
+
+    # Authentication Endpoints
     path('user/token/', api_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path ('user/register/', api_views.RegisterView.as_view(), name='user_register'),
@@ -17,3 +25,7 @@ urlpatterns = [
 # http://127.0.0.1:8001/api/v1/user/register
 # http://127.0.0.1:8001/api/v1/user/password-reset-email/<email>/
 # http://127.0.0.1:8001/api/v1/user/password-change/
+
+# http://127.0.0.1:8001/course/category/
+# http://127.0.0.1:8001/course/course-list/
+# http://127.0.0.1:8001/course/course-detail/<slug>/

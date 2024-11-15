@@ -261,4 +261,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "course_id",
             "date",
             "students",
+            "curriculum",
+            "lectures",
+            "reviews",
         ]

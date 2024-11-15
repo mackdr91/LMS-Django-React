@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from django.conf import settings
 
 from userauth.models import CustomUser
+from api import models as api_models
 from .utils import generate_random_string
 
 
@@ -88,6 +89,8 @@ class PasswordResetEmailVerifyAPIView(generics.RetrieveAPIView):
 
 
 class PasswordChangeAPIView(generics.CreateAPIView):
+
+
     permission_classes = [AllowAny]
     serializer_class = api_serializers.CustomUserSerializer
 
@@ -120,3 +123,36 @@ class PasswordChangeAPIView(generics.CreateAPIView):
             return Response({'message': 'Password changed successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'message': "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CategoryListAPIView(generics.ListAPIView):
+    queryset = api_models.Category.objects.filter(active=True) # Filter active categories
+    serializer_class = api_serializers.CategorySerializer
+    permission_classes = [AllowAny]
+
+
+class CourseListAPIView(generics.ListAPIView):
+    queryset = api_models.Course.objects.filter(
+        platform_status="Published",
+        teacher_course_status="Published"
+    ) # Filter published courses
+    serializer_class = api_serializers.CourseSerializer
+    permission_classes = [AllowAny]
+
+
+class CourseDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = api_serializers.CourseSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        """
+        Retrieve a Course object based on the slug provided in the URL.
+
+        This method fetches the course with the given slug from the database.
+        If no course is found, it raises a DoesNotExist exception.
+
+        :return: The Course instance corresponding to the slug.
+        :raises: Course.DoesNotExist if no course with the slug exists.
+        """
+        slug = self.kwargs['slug']
+        return api_models.Course.objects.get(slug=slug)
