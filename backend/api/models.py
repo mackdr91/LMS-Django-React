@@ -421,7 +421,7 @@ class Cart(models.Model):
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.course.title
+        return self.course.title + " - User: " + self.user.email
 
 
 class CartOrder(models.Model):

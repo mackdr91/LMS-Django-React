@@ -146,7 +146,7 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class Cart(serializers.ModelSerializer):
+class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = api_models.Cart
         fields = "__all__"
@@ -230,6 +230,7 @@ class EnrolledCourseSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+
     students = EnrolledCourseSerializer(
         many=True
     )  # array that contains all the enrolled students

@@ -14,6 +14,7 @@ from django.conf import settings
 from userauth.models import CustomUser
 from api import models as api_models
 from .utils import generate_random_string
+from decimal import Decimal
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -155,4 +156,95 @@ class CourseDetailAPIView(generics.RetrieveAPIView):
         :raises: Course.DoesNotExist if no course with the slug exists.
         """
         slug = self.kwargs['slug']
-        return api_models.Course.objects.get(slug=slug)
+        course = api_models.Course.objects.get(slug=slug, platform_status="Published", teacher_course_status="Published")
+        return course
+
+
+
+class CartAPIView(generics.CreateAPIView):
+    serializer_class = api_serializers.CartSerializer
+    queryset = api_models.Cart.objects.all()
+    permission_classes = [AllowAny]
+
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new cart.
+
+        This method creates a new cart and returns it.
+
+        :param request: The request object.
+        :param args: Additional positional arguments.
+        :param kwargs: Additional keyword arguments.
+        :return: The created cart object.
+        """
+        course_id = request.data['course_id'] # Get the course ID from the request data
+        user_id = request.data['user_id'] # Get the user ID from the request data
+        country = request.data['country'] # Get the country from the request data
+        price = request.data['price'] # Get the price from the request data
+        cart_id = request.data['cart_id'] # Get the cart ID from the request data
+
+
+        course = api_models.Course.objects.filter(id=course_id).first() # Get the course with the given ID
+        """
+        If the user ID is not "undefined", get the user with the given ID
+        If the user ID is "undefined", set the user to None
+        """
+        if user_id != "undefined":
+            user = CustomUser.objects.filter(id=user_id).first() # Get the user with the given ID
+        else:
+            user = None
+        """
+        If the country is not "undefined", get the country with the given name
+        If the country is "undefined", set the country to "United States"
+        """
+        try:
+            country_object = api_models.Country.objects.filter(name=country_name).first() # Get the country with the given name
+            country = country_object.name
+        except:
+            country_object = None
+            country = "United States"
+
+        if country_object:
+            tax_rate = country_object.tax_rate / 100 # Get the tax rate for the country
+        else:
+            tax_rate = 0
+
+        cart = api_models.Cart.objects.filter(cart_id=cart_id, course=course).first() # Get the cart with the given ID
+
+        """
+        If the cart already exists, update it
+        If the cart does not exist, create a new one
+        """
+
+        if cart:
+            cart.course = course
+            cart.user = user
+            cart.country = country
+            cart.price = price
+            cart.tax_fee = Decimal(price) * Decimal(tax_rate)
+            cart.country = country
+            cart.cart_id = cart_id
+            cart.total = Decimal(cart.price) + Decimal(cart.tax_fee) # Calculate the total price
+            cart.save()
+
+            return Response({'message': 'Cart updated successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            cart = api_models.Cart()
+            cart.course = course
+            cart.user = user
+            cart.country = country
+            cart.price = price
+            cart.tax_fee = Decimal(price) * Decimal(tax_rate)
+            cart.country = country
+            cart.cart_id = cart_id
+            cart.total = Decimal(cart.price) + Decimal(cart.tax_fee) # Calculate the total price
+            cart.save()
+
+
+            return Response({'message': 'Cart created successfully'}, status=status.HTTP_201_CREATED)
+
+
+
+
+
