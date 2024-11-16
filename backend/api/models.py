@@ -415,13 +415,13 @@ class Cart(models.Model):
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     country = models.CharField(max_length=100, null=True, blank=True)
     cart_id = ShortUUIDField(
-        unique=True, max_length=20, alphabet="1234567890", length=6
+         max_length=20, alphabet="1234567890", length=6
     )
     created_at = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.course.title + " - User: " + self.user.email
+        return self.course.title
 
 
 class CartOrder(models.Model):
@@ -617,6 +617,10 @@ class Country(models.Model):
     name = models.CharField(max_length=100)
     tax_rate = models.IntegerField(default=5)
     active = models.BooleanField(default=True)
+
+
+    class Meta:
+        verbose_name_plural = "Countries"
 
     def __str__(self):
         return self.name

@@ -199,7 +199,7 @@ class CartAPIView(generics.CreateAPIView):
         If the country is "undefined", set the country to "United States"
         """
         try:
-            country_object = api_models.Country.objects.filter(name=country_name).first() # Get the country with the given name
+            country_object = api_models.Country.objects.filter(name=country).first() # Get the country with the given name
             country = country_object.name
         except:
             country_object = None
@@ -245,6 +245,155 @@ class CartAPIView(generics.CreateAPIView):
             return Response({'message': 'Cart created successfully'}, status=status.HTTP_201_CREATED)
 
 
+class CartListAPIView(generics.ListAPIView):
+    serializer_class = api_serializers.CartSerializer
+    queryset = api_models.Cart.objects.all()
+    permission_classes = [AllowAny]
+
+
+    def get_queryset(self): # Override the get_queryset method to filter the queryset
+        """
+        Override the get_queryset method to filter the queryset based on the cart_id parameter.
+
+        :param self: The instance of the class
+        :param cart_id: The cart_id parameter passed from the url
+        :return: The filtered queryset
+        """
+        # a dictionary that contains the keyword arguments
+        # that were passed to the view or serializer
+        cart_id = self.kwargs['cart_id'] # Get the cart_id from the url
+        queryset = api_models.Cart.objects.filter(cart_id=cart_id)
+        return queryset
 
 
 
+class CartItemDeleteAPIView(generics.DestroyAPIView):
+
+    serializer_class = api_serializers.CartSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self): # Override the get_object method get a single object
+        """
+        Return a Cart object with the given cart_id and item_id.
+
+        This method filters the queryset of Cart objects based on the cart_id and item_id
+        parameters passed from the url and returns the first result.
+
+        :param self: The instance of the class
+        :param cart_id: The cart_id parameter passed from the url
+        :param item_id: The item_id parameter passed from the url
+        :return: The Cart object with the given cart_id and item_id
+        """
+        cart_id = self.kwargs['cart_id'] # Get the cart_id from the url
+        item_id = self.kwargs['item_id'] # Get the item_id from the url
+        return api_models.Cart.objects.filter(cart_id=cart_id, id=item_id).first() # Get the cart with the given cart_id and item_id=item_id)
+
+
+
+class CartStatsAPIView(generics.RetrieveAPIView):
+    serializer_class = api_serializers.CartSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'cart_id' # Set the lookup field to 'cart_id'
+
+    def get_queryset(self): # Override the get_queryset method to filter the queryset
+        """
+        Override the get_queryset method to filter the queryset based on the cart_id parameter.
+
+        :param self: The instance of the class
+        :param cart_id: The cart_id parameter passed from the url
+        :return: The filtered queryset
+        """
+        # a dictionary that contains the keyword arguments
+        # that were passed to the view or serializer
+        cart_id = self.kwargs['cart_id'] # Get the cart_id from the url
+        queryset = api_models.Cart.objects.filter(cart_id=cart_id)
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        """
+        Retrieve and return the total price, tax, and main total for all cart items.
+
+        This method calculates the cumulative price, tax, and main total for all items
+        in the cart associated with the specified cart ID. It retrieves the cart items
+        from the database, computes the totals, and returns them in a response.
+
+        :param request: The request object.
+        :param args: Additional positional arguments.
+        :param kwargs: Additional keyword arguments.
+        :return: A response object containing the total price, tax, and main total.
+        :rtype: Response
+        """
+        queryset = self.get_queryset()
+
+        total_price = 0.00
+        total_tax = 0.00
+        total_main = 0.00
+
+        # Calculate the total price, tax, and main total
+        # for all items in the cart
+        for cart_item in queryset:
+            total_price += float(self.calculate_price(cart_item))
+            total_tax += float(self.calculate_tax(cart_item))
+            total_main += round(float(self.calculate_main_total(cart_item)), 2)
+
+
+        data = {
+                'price': total_price,
+                'tax': total_tax,
+                'total': total_main
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+    def calculate_price(self, cart_item):
+        """
+        Calculate the price of a single item in the cart.
+
+        This method takes a Cart object as an argument and returns
+        the price of the item in the cart. The price is retrieved from
+        the Cart object.
+
+        :param self: The instance of the class
+        :param cart_item: The Cart object
+        :return: The price of the item in the cart
+        :rtype: float
+        """
+        return cart_item.price
+
+    def calculate_tax(self, cart_item):
+
+        """
+        Calculate the tax of a single item in the cart.
+
+        This method takes a Cart object as an argument and returns
+        the tax of the item in the cart. The tax is retrieved from
+        the Cart object.
+
+        :param self: The instance of the class
+        :param cart_item: The Cart object
+        :return: The tax of the item in the cart
+        :rtype: float
+        """
+        return cart_item.tax_fee
+
+    def calculate_main_total(self, cart_item):
+        """
+        Calculate the main total of a single item in the cart.
+
+        This method takes a Cart object as an argument and returns
+        the main total of the item in the cart. The main total is
+        the price of the item in the cart.
+
+        :param self: The instance of the class
+        :param cart_item: The Cart object
+        :return: The main total of the item in the cart
+        :rtype: float
+        """
+        return cart_item.total
+
+
+
+
+
+    
