@@ -22,6 +22,7 @@ urlpatterns = [
     path ('user/password-change/', api_views.PasswordChangeAPIView.as_view(), name='password_change'),
     path('order/create-order/', api_views.CreateOrderAPIView.as_view(), name='order_create/'),
     path('order/checkout/<order_id>/', api_views.CheckoutAPIView.as_view(), name='order_checkout/'),
+    path('order/coupon-apply/', api_views.CouponApplyAPIView.as_view(), name='coupon_apply/'),
 ]
 
 # ENDPOINTS

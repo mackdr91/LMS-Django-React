@@ -461,4 +461,46 @@ class CheckoutAPIView(generics.RetrieveAPIView):
     lookup_field = 'order_id'
 
 
+class CouponApplyAPIView(generics.CreateAPIView):
+    serializer_class = api_serializers.CouponSerializer
+    permission_classes = [AllowAny]
+
+
+    def create(self, request, *args, **kwargs):
+        order_id = request.data['order_id'] # Get the order ID from the request data
+        code = request.data['code'] # Get the code from the request data
+
+        order = api_models.CartOrder.objects.get(order_id=order_id)
+        coupon = api_models.Coupon.objects.get(code=code)
+
+        if coupon:
+            order_items = api_models.CartOrderItem.objects.filter(order=order, teacher=coupon.teacher)
+            for o in order_items:
+                if coupon not in o.coupons.all():
+                    discount = o.total * coupon.discount / 100
+
+                    o.total -= discount
+                    o.price -= discount
+                    o.saved += discount
+                    o.applied_coupon = True
+                    o.coupons.add(coupon)
+
+                    order.coupons.add(coupon)
+                    order.total -= discount
+                    order.subtotal -= discount
+                    order.saved += discount
+
+                    o.save()
+                    order.save()
+                    coupon.used_by.add(order.student)
+
+                    return Response({'message': 'Coupon Found and Activated'}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message': 'Coupon already applied'}, status=status.HTTP_200_OK)
+
+        else:
+            return Response({'message': 'Coupon not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 
