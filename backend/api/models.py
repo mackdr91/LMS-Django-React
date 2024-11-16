@@ -476,6 +476,7 @@ class CartOrderItem(models.Model):
     oid = ShortUUIDField(
         unique=True, max_length=20, alphabet="1234567890", length=6
     )
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     class Meta:
         ordering = ("-date",)

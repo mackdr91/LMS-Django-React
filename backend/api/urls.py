@@ -20,6 +20,8 @@ urlpatterns = [
     path ('user/register/', api_views.RegisterView.as_view(), name='user_register'),
     path ('user/password-reset-email/<email>/', api_views.PasswordResetEmailVerifyAPIView.as_view(), name='password_reset_email_verify'),
     path ('user/password-change/', api_views.PasswordChangeAPIView.as_view(), name='password_change'),
+    path('order/create-order/', api_views.CreateOrderAPIView.as_view(), name='order_create/'),
+    path('order/checkout/<order_id>/', api_views.CheckoutAPIView.as_view(), name='order_checkout/'),
 ]
 
 # ENDPOINTS
