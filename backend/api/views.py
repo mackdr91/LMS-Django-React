@@ -1,4 +1,5 @@
 #from django.shortcuts import render
+from django.shortcuts import redirect
 from api import serializer as api_serializers
 from rest_framework.permissions import AllowAny
 from django.core.mail import EmailMultiAlternatives
@@ -15,6 +16,10 @@ from userauth.models import CustomUser
 from api import models as api_models
 from .utils import generate_random_string
 from decimal import Decimal
+
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -502,5 +507,87 @@ class CouponApplyAPIView(generics.CreateAPIView):
             return Response({'message': 'Coupon not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+
+class StripeCheckoutAPIView(generics.CreateAPIView):
+    serializer_class = api_serializers.CartOrderSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+
+        """
+        Create a Stripe checkout session for the specified order.
+
+        This method retrieves the order using the provided order_id from the URL,
+        and attempts to create a Stripe checkout session for payment processing.
+        If the order is not found, it returns a 404 response. Upon successful creation
+        of the checkout session, it redirects the user to the Stripe checkout page.
+        If an error occurs during session creation, it returns an error message.
+
+        :param request: The request object containing HTTP request data.
+        :param args: Additional positional arguments.
+        :param kwargs: Additional keyword arguments, including 'order_id' in the URL.
+
+        :return: A redirect to the Stripe checkout session URL or an error response.
+        """
+        order_oid = self.kwargs['order_id']
+        order = api_models.CartOrder.objects.get(order_id=order_oid)
+
+        if not order:
+            return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                customer_email=order.email,
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'unit_amount': int(order.total * 100),
+                            'product_data': {
+                                'name': order.full_name,
+                            },
+                        },
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url=settings.FRONTEND_SITE_URL + '/payment-success/' + order_oid + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=settings.FRONTEND_SITE_URL + '/payment-failed/'
+            )
+            print("Checkout Session =====", checkout_session)
+            order.stripe_session_id = checkout_session['id']
+
+
+            return redirect(checkout_session.url)
+
+        except stripe.error.StripeError as e:
+            return Response({'message': f"Something went wrong when creating the checkout Error: {str(e)}"})
+
+
+
+
+class PaymentSuccessAPIView(generics.RetrieveAPIView):
+    serializer_class = api_serializers.CartOrderSerializer
+    queryset = api_models.CartOrder.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        order_id = request.data['order_id']
+        session_id = request.data['session_id']
+
+        order = api_models.CartOrder.objects.get(order_id=order_id)
+        order_items = api_models.CartOrderItem.objects.filter(order=order)
+
+        if session_id != "null"
+            session = stripe.checkout.Session.retrieve(session_id)
+            if session.payment_status == "paid":
+                if order.payment_status == "processing":
+                    order.payment_status = "paid"
+                    order.save()
+                    return Response({'message': 'Payment successful'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': 'Payment already processed'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Payment failed'}, status=status.HTTP_200_OK)
 
 

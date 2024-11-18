@@ -247,6 +247,12 @@ ANYMAIL = {
 # Email settings
 EMAIL = env("EMAIL")
 
+
+# Stripe settings
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+FRONTEND_SITE_URL = env("FRONTEND_SITE_URL")
+BACKEND_SITE_URL = env("BACKEND_SITE_URL")
+
 # Set coresheader to allow all origin
 CORS_ALLOWED_ORIGINS = [
 
