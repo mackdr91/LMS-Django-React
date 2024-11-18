@@ -11,6 +11,7 @@ urlpatterns = [
     path('course/cart/', api_views.CartAPIView.as_view(), name='course_create'),
     path('course/cart-list/<cart_id>/', api_views.CartListAPIView.as_view(), name='cart_list'),
     path('course/cart-item-delete/<cart_id>/<item_id>/', api_views.CartItemDeleteAPIView.as_view(), name='cart_item_delete'),
+    path('course/search/', api_views.SearchCourseAPIView.as_view(), name='search'),
     path('cart/stats/<cart_id>/', api_views.CartStatsAPIView.as_view(), name='cart_stats'),
 
 

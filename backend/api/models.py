@@ -32,6 +32,8 @@ NOTIFICATION_TYPE = (
     ("New Course Published", "New Course Published"),
     ("New Review", "New Review"),
     ("Draft Course", "Draft Course"),
+    ("Course Enrollment Completed", "Course Enrollment Completed"),
+    ("New Order", "New Order"),
 )
 
 TEACHER_STATUS = (

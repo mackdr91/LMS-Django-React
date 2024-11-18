@@ -206,7 +206,7 @@ class CartAPIView(generics.CreateAPIView):
         try:
             country_object = api_models.Country.objects.filter(name=country).first() # Get the country with the given name
             country = country_object.name
-        except:
+        except api_models.Country.DoesNotExist:
             country_object = None
             country = "United States"
 
@@ -578,12 +578,31 @@ class PaymentSuccessAPIView(generics.RetrieveAPIView):
         order = api_models.CartOrder.objects.get(order_id=order_id)
         order_items = api_models.CartOrderItem.objects.filter(order=order)
 
-        if session_id != "null"
+        if session_id != "null":
             session = stripe.checkout.Session.retrieve(session_id)
             if session.payment_status == "paid":
                 if order.payment_status == "processing":
                     order.payment_status = "paid"
                     order.save()
+                    api_models.Notification.objects.create(
+                        user=order.student,
+                        type="Payment",
+                        order=order
+                    )
+                    for o in order_items:
+                        api_models.Notification.objects.create(
+                            teacher=o.teacher,
+                            order=order,
+                            order_item=o,
+                            type="New Order"
+
+                        )
+                        api_models.EnrolledCourse.objects.create(
+                            course=o.course,
+                            user=order.student,
+                            teacher=o.teacher,
+                            order_item=o
+                        )
                     return Response({'message': 'Payment successful'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Payment already processed'}, status=status.HTTP_200_OK)
@@ -591,3 +610,15 @@ class PaymentSuccessAPIView(generics.RetrieveAPIView):
                 return Response({'message': 'Payment failed'}, status=status.HTTP_200_OK)
 
 
+
+class SearchCourseAPIView(generics.ListAPIView):
+    serializer_class = api_serializers.CourseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        query = self.request.GET.get('query')
+        return api_models.Course.objects.filter(
+            title__icontains=query,
+            platform_status="Published",
+            teacher_course_status="Published"
+            )
